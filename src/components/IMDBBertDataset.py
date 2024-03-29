@@ -253,4 +253,4 @@ class IMDBBertDataset(Dataset):
             return s, inverse_token_mask
     
     except Exception as e:
-        raise(CustomException,sys)
+        raise CustomException(e,sys)
