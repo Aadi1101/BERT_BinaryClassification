@@ -1,6 +1,7 @@
 import sys
 from src.logger import logging
 from src.exception import CustomException
+from pathlib import Path
 
 import torch
 import time
@@ -74,3 +75,27 @@ class BertTrainer:
             return loss
     except Exception as e:
         raise CustomException(e,sys)
+    
+
+if __name__ == '__main__':
+    EMB_SIZE = 64
+    HIDDEN_SIZE = 36
+    EPOCHS = 4
+    BATCH_SIZE = 12
+    NUM_HEADS = 4
+    print("Prepare Dataset")
+    BASE_DIR = Path(__file__).resolve().parent
+    ds = IMDBBertDataset(BASE_DIR.joinpath('data/imdb.csv'), ds_from=0, ds_to=1000, should_include_text=True)
+
+    bert = BertModel(len(ds.vocab),EMB_SIZE,HIDDEN_SIZE,NUM_HEADS)
+    trainer = BertTrainer(
+        model=bert,
+        dataset=ds,
+        print_progress_every=20,
+        print_accuracy_every=200,
+        batch_size=BATCH_SIZE,
+        learning_rate=0.00007,
+        epochs=4
+    )
+    print(trainer.print_summary())
+    trainer()
